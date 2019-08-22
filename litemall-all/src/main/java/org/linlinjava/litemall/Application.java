@@ -3,23 +3,14 @@ package org.linlinjava.litemall;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-@SpringBootApplication(scanBasePackages = {
-        "org.linlinjava.litemall",
-        "org.linlinjava.litemall.core",
-        "org.linlinjava.litemall.db",
-        "org.linlinjava.litemall.os",
-        "org.linlinjava.litemall.wx",
-        "org.linlinjava.litemall.admin"})
+@SpringBootApplication(scanBasePackages = {"org.linlinjava.litemall"})
 @MapperScan("org.linlinjava.litemall.db.dao")
-public class Application extends SpringBootServletInitializer {
-
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(Application.class);
-    }
+@EnableTransactionManagement
+@EnableScheduling
+public class Application {
 
     public static void main(String[] args) throws Exception {
         SpringApplication.run(Application.class, args);

@@ -5,12 +5,15 @@
 		"es6": true,
 		"postcss": true,
 		"minified": true,
-		"newFeature": true
+		"newFeature": true,
+		"uglifyFileName": true
 	},
 	"compileType": "miniprogram",
-	"libVersion": "1.9.93",
-  "appid": "wxa5b486c6b918ecfb",
-  "projectname": "litemall-wx",
+	"libVersion": "2.4.0",
+	"appid": "wxa5b486c6b918ecfb",
+	"projectname": "litemall-wx",
+	"simulatorType": "wechat",
+	"simulatorPluginLibVersion": {},
 	"condition": {
 		"search": {
 			"current": -1,
@@ -28,7 +31,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 0,
+			"current": 22,
 			"list": [
 				{
 					"id": -1,
@@ -52,13 +55,13 @@
 					"id": -1,
 					"name": "专题评论列表",
 					"pathName": "pages/topicComment/topicComment",
-					"query": "valueId=314&typeId=1"
+					"query": "valueId=314&type=1"
 				},
 				{
 					"id": -1,
 					"name": "专题评论添加",
 					"pathName": "pages/topicCommentPost/topicCommentPost",
-					"query": "valueId=314&typeId=1"
+					"query": "valueId=314&type=1"
 				},
 				{
 					"id": -1,
@@ -103,16 +106,16 @@
 					"query": ""
 				},
 				{
-					"id": -1,
+					"id": 12,
 					"name": "商品",
 					"pathName": "pages/goods/goods",
-					"query": "id=1181000"
+					"query": "id=1181003"
 				},
 				{
 					"id": -1,
 					"name": "商品评论列表",
 					"pathName": "pages/comment/comment",
-					"query": "valueId=1181000&typeId=0"
+					"query": "valueId=1181000&type=0"
 				},
 				{
 					"id": -1,
@@ -123,19 +126,7 @@
 				{
 					"id": -1,
 					"name": "下单",
-					"pathName": "pages/shopping/checkout/checkout",
-					"query": ""
-				},
-				{
-					"id": -1,
-					"name": "下单地址",
-					"pathName": "pages/shopping/address/address",
-					"query": ""
-				},
-				{
-					"id": -1,
-					"name": "下单地址添加",
-					"pathName": "pages/shopping/addressAdd/addressAdd",
+					"pathName": "pages/checkout/checkout",
 					"query": ""
 				},
 				{
@@ -163,21 +154,21 @@
 					"query": "id=1"
 				},
 				{
-					"id": -1,
+					"id": 22,
 					"name": "待评价的订单详情",
 					"pathName": "pages/ucenter/orderDetail/orderDetail",
-					"query": "id=24"
+					"query": "id=1"
 				},
 				{
 					"id": -1,
 					"name": "购买商品评价",
 					"pathName": "pages/commentPost/commentPost",
-					"query": "orderId=2&typeId=0&valueId=1116011"
+					"query": "orderId=2&type=0&valueId=1116011"
 				},
 				{
-					"id": -1,
+					"id": 22,
 					"name": "我的优惠券",
-					"pathName": "pages/ucenter/coupon/coupon",
+					"pathName": "pages/ucenter/couponList/couponList",
 					"query": ""
 				},
 				{
@@ -212,6 +203,12 @@
 				},
 				{
 					"id": -1,
+					"name": "账号登录",
+					"pathName": "pages/auth/accountLogin/accountLogin",
+					"query": ""
+				},
+				{
+					"id": -1,
 					"name": "注册",
 					"pathName": "pages/auth/register/register",
 					"query": ""
@@ -221,6 +218,55 @@
 					"name": "找回密码",
 					"pathName": "pages/auth/reset/reset",
 					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "关于",
+					"pathName": "pages/about/about",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "测试更新",
+					"pathName": "pages/index/index",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "意见反馈",
+					"pathName": "pages/ucenter/feedback/feedback",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "团购专区",
+					"pathName": "pages/groupon/grouponList/grouponList",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "选择优惠券",
+					"pathName": "pages/ucenter/couponSelect/couponSelect",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "我的优惠券列表",
+					"pathName": "pages/ucenter/couponList/couponList",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "优惠券列表",
+					"pathName": "pages/coupon/coupon",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "帮助中心",
+					"pathName": "pages/help/help",
+					"query": "",
+					"scene": null
 				}
 			]
 		}

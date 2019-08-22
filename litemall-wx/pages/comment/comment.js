@@ -7,18 +7,21 @@ Page({
     comments: [],
     allCommentList: [],
     picCommentList: [],
-    typeId: 0,
+    type: 0,
     valueId: 0,
     showType: 0,
     allCount: 0,
     hasPicCount: 0,
     allPage: 1,
     picPage: 1,
-    size: 20
+    limit: 20
   },
-  getCommentCount: function () {
+  getCommentCount: function() {
     let that = this;
-    util.request(api.CommentCount, { valueId: that.data.valueId, typeId: that.data.typeId}).then(function (res) {
+    util.request(api.CommentCount, {
+      valueId: that.data.valueId,
+      type: that.data.type
+    }).then(function(res) {
       if (res.errno === 0) {
         that.setData({
           allCount: res.data.allCount,
@@ -27,59 +30,59 @@ Page({
       }
     });
   },
-  getCommentList: function(){
+  getCommentList: function() {
     let that = this;
-    util.request(api.CommentList, { 
-      valueId: that.data.valueId, 
-      typeId: that.data.typeId, 
-      size: that.data.size,
+    util.request(api.CommentList, {
+      valueId: that.data.valueId,
+      type: that.data.type,
+      limit: that.data.limit,
       page: (that.data.showType == 0 ? that.data.allPage : that.data.picPage),
-      showType: that.data.showType 
-      }).then(function (res) {
+      showType: that.data.showType
+    }).then(function(res) {
       if (res.errno === 0) {
 
         if (that.data.showType == 0) {
           that.setData({
-            allCommentList: that.data.allCommentList.concat(res.data.data),
-            allPage: res.data.currentPage,
-            comments: that.data.allCommentList.concat(res.data.data)
+            allCommentList: that.data.allCommentList.concat(res.data.list),
+            allPage: res.data.page,
+            comments: that.data.allCommentList.concat(res.data.list)
           });
         } else {
           that.setData({
-            picCommentList: that.data.picCommentList.concat(res.data.data),
-            picPage: res.data.currentPage,
-            comments: that.data.picCommentList.concat(res.data.data)
+            picCommentList: that.data.picCommentList.concat(res.data.list),
+            picPage: res.data.page,
+            comments: that.data.picCommentList.concat(res.data.list)
           });
         }
       }
     });
   },
-  onLoad: function (options) {
+  onLoad: function(options) {
     // 页面初始化 options为页面跳转所带来的参数
     this.setData({
-      typeId: options.typeId,
+      type: options.type,
       valueId: options.valueId
     });
     this.getCommentCount();
     this.getCommentList();
   },
-  onReady: function () {
+  onReady: function() {
     // 页面渲染完成
 
   },
-  onShow: function () {
+  onShow: function() {
     // 页面显示
 
   },
-  onHide: function () {
+  onHide: function() {
     // 页面隐藏
 
   },
-  onUnload: function () {
+  onUnload: function() {
     // 页面关闭
 
   },
-  switchTab: function () {
+  switchTab: function() {
     let that = this;
     if (that.data.showType == 0) {
       that.setData({
@@ -98,19 +101,19 @@ Page({
     }
     this.getCommentList();
   },
-  onReachBottom: function(){
+  onReachBottom: function() {
     console.log('onPullDownRefresh');
-    if ( this.data.showType == 0) {
+    if (this.data.showType == 0) {
 
-      if (this.data.allCount / this.data.size < this.data.allPage) {
+      if (this.data.allCount / this.data.limit < this.data.allPage) {
         return false;
       }
 
       this.setData({
-        'allPage' : this.data.allPage + 1
+        'allPage': this.data.allPage + 1
       });
     } else {
-      if (this.data.hasPicCount / this.data.size < this.data.picPage) {
+      if (this.data.hasPicCount / this.data.limit < this.data.picPage) {
         return false;
       }
 

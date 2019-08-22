@@ -1,17 +1,12 @@
 #!/bin/bash
 
 # 本脚本的作用是
-# 1. 编译打包Spring Boot应用
-# 2. 编译litemall-admin应用
-# 3. 调用upload.sh上传
-# 4. ssh远程登录云主机，运行deploy/bin/deploy.sh脚本
-# 注意：运行脚本必须是在litemall主目录下,类似如下命令
-# cd litemall
-# ./deploy/util/lazy.sh
-
+# 1. 项目打包
+# 2. 上传云主机
+# 3. 远程登录云主机并执行reset脚本
 
 # 请设置云主机的IP地址和账户
-# 例如 ubuntu@122.152.206.172
+# 例如 ubuntu@118.24.0.153
 REMOTE=
 # 请设置本地SSH私钥文件id_rsa路径
 # 例如 /home/litemall/id_rsa
@@ -20,32 +15,31 @@ ID_RSA=
 if test -z "$REMOTE"
 then
   echo "请设置云主机登录IP地址和账户"
-  exit -1
+  exit 1
 fi
 
 if test -z "$ID_RSA"
 then
   echo "请设置云主机登录IP地址和账户"
-  exit -1
+  exit 1
 fi
 
-echo $PWD
-mvn clean
-mvn package
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+cd $DIR/../.. || exit 2
+LITEMALL_HOME=$PWD
+echo "LITEMALL_HOME $LITEMALL_HOME"
 
-cd ./litemall-admin
-# 安装阿里node镜像工具
-npm install -g cnpm --registry=https://registry.npm.taobao.org
-# 安装node项目依赖环境
-cnpm install
-cnpm run build:dep
+# 项目打包
+cd $LITEMALL_HOME || exit 2
+./deploy/util/package.sh
 
-cd ..
-echo $PWD
-./deploy/util/upload.sh
+# 上传云主机
+cd $LITEMALL_HOME || exit 2
+scp -i $ID_RSA -r  ./deploy $REMOTE:/home/ubuntu/
 
-# 远程登录云主机并执行deploy脚本
+# 远程登录云主机并执行reset脚本
 ssh $REMOTE -i $ID_RSA << eeooff
-sudo ./deploy/bin/deploy.sh
+cd /home/ubuntu
+sudo ./deploy/bin/reset.sh
 exit
 eeooff

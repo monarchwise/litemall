@@ -8,12 +8,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class LitemallCategoryService {
     @Resource
     private LitemallCategoryMapper categoryMapper;
+    private LitemallCategory.Column[] CHANNEL = {LitemallCategory.Column.id, LitemallCategory.Column.name, LitemallCategory.Column.iconUrl};
 
     public List<LitemallCategory> queryL1WithoutRecommend(int offset, int limit) {
         LitemallCategoryExample example = new LitemallCategoryExample();
@@ -37,7 +39,7 @@ public class LitemallCategoryService {
 
     public List<LitemallCategory> queryByPid(Integer pid) {
         LitemallCategoryExample example = new LitemallCategoryExample();
-        example.or().andParentIdEqualTo(pid).andDeletedEqualTo(false);
+        example.or().andPidEqualTo(pid).andDeletedEqualTo(false);
         return categoryMapper.selectByExample(example);
     }
 
@@ -55,35 +57,25 @@ public class LitemallCategoryService {
         LitemallCategoryExample example = new LitemallCategoryExample();
         LitemallCategoryExample.Criteria criteria = example.createCriteria();
 
-        if(!StringUtils.isEmpty(id)){
+        if (!StringUtils.isEmpty(id)) {
             criteria.andIdEqualTo(Integer.valueOf(id));
         }
-        if(!StringUtils.isEmpty(name)){
+        if (!StringUtils.isEmpty(name)) {
             criteria.andNameLike("%" + name + "%");
         }
         criteria.andDeletedEqualTo(false);
+
+        if (!StringUtils.isEmpty(sort) && !StringUtils.isEmpty(order)) {
+            example.setOrderByClause(sort + " " + order);
+        }
 
         PageHelper.startPage(page, size);
         return categoryMapper.selectByExample(example);
     }
 
-    public int countSelective(String id, String name, Integer page, Integer size, String sort, String order) {
-        LitemallCategoryExample example = new LitemallCategoryExample();
-        LitemallCategoryExample.Criteria criteria = example.createCriteria();
-
-        if(!StringUtils.isEmpty(id)){
-            criteria.andIdEqualTo(Integer.valueOf(id));
-        }
-        if(!StringUtils.isEmpty(name)){
-            criteria.andNameLike("%" + name + "%");
-        }
-        criteria.andDeletedEqualTo(false);
-
-        return (int)categoryMapper.countByExample(example);
-    }
-
-    public void updateById(LitemallCategory category) {
-        categoryMapper.updateByPrimaryKeySelective(category);
+    public int updateById(LitemallCategory category) {
+        category.setUpdateTime(LocalDateTime.now());
+        return categoryMapper.updateByPrimaryKeySelective(category);
     }
 
     public void deleteById(Integer id) {
@@ -91,10 +83,11 @@ public class LitemallCategoryService {
     }
 
     public void add(LitemallCategory category) {
+        category.setAddTime(LocalDateTime.now());
+        category.setUpdateTime(LocalDateTime.now());
         categoryMapper.insertSelective(category);
     }
 
-    private LitemallCategory.Column[] CHANNEL = {LitemallCategory.Column.id, LitemallCategory.Column.name, LitemallCategory.Column.iconUrl};
     public List<LitemallCategory> queryChannel() {
         LitemallCategoryExample example = new LitemallCategoryExample();
         example.or().andLevelEqualTo("L1").andDeletedEqualTo(false);

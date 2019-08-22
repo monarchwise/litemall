@@ -1,73 +1,41 @@
 package org.linlinjava.litemall.admin.web;
 
-import com.github.pagehelper.util.StringUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.linlinjava.litemall.admin.annotation.LoginAdmin;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.linlinjava.litemall.admin.annotation.RequiresPermissionsDesc;
+import org.linlinjava.litemall.core.util.ResponseUtil;
+import org.linlinjava.litemall.core.validator.Order;
+import org.linlinjava.litemall.core.validator.Sort;
 import org.linlinjava.litemall.db.domain.LitemallUser;
 import org.linlinjava.litemall.db.service.LitemallUserService;
-import org.linlinjava.litemall.core.util.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/admin/user")
+@Validated
 public class AdminUserController {
     private final Log logger = LogFactory.getLog(AdminUserController.class);
 
     @Autowired
     private LitemallUserService userService;
 
+    @RequiresPermissions("admin:user:list")
+    @RequiresPermissionsDesc(menu = {"用户管理", "会员管理"}, button = "查询")
     @GetMapping("/list")
-    public Object list(@LoginAdmin Integer adminId,
-                       String username, String mobile,
-                       @RequestParam(value = "page", defaultValue = "1") Integer page,
-                       @RequestParam(value = "limit", defaultValue = "10") Integer limit,
-                       String sort, String order){
-        if(adminId == null){
-            return ResponseUtil.unlogin();
-        }
+    public Object list(String username, String mobile,
+                       @RequestParam(defaultValue = "1") Integer page,
+                       @RequestParam(defaultValue = "10") Integer limit,
+                       @Sort @RequestParam(defaultValue = "add_time") String sort,
+                       @Order @RequestParam(defaultValue = "desc") String order) {
         List<LitemallUser> userList = userService.querySelective(username, mobile, page, limit, sort, order);
-        int total = userService.countSeletive(username, mobile, page, limit, sort, order);
-        Map<String, Object> data = new HashMap<>();
-        data.put("total", total);
-        data.put("items", userList);
-
-        return ResponseUtil.ok(data);
-    }
-
-    @GetMapping("/username")
-    public Object username(String username){
-        if(StringUtil.isEmpty(username)){
-            return ResponseUtil.badArgument();
-        }
-
-        int total = userService.countSeletive(username, null, null, null, null, null);
-        if(total == 0){
-            return ResponseUtil.ok("不存在");
-        }
-        return ResponseUtil.ok("已存在");
-    }
-
-
-    @PostMapping("/create")
-    public Object create(@LoginAdmin Integer adminId, @RequestBody LitemallUser user){
-        logger.debug(user);
-        user.setAddTime(LocalDateTime.now());
-        userService.add(user);
-        return ResponseUtil.ok(user);
-    }
-
-    @PostMapping("/update")
-    public Object update(@LoginAdmin Integer adminId, @RequestBody LitemallUser user){
-        logger.debug(user);
-
-        userService.update(user);
-        return ResponseUtil.ok(user);
+        return ResponseUtil.okList(userList);
     }
 }
